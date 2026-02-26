@@ -1,0 +1,146 @@
+// OpenCode Configuration Template
+// ================================
+// Copy this file to: ~/.config/opencode/opencode.json (remove the comments — JSON doesn't support them)
+// Then replace all <PLACEHOLDER> values with your actual tokens.
+//
+// Token Setup Guide:
+// ------------------
+// 1. GITHUB_TOKEN — Set as environment variable.
+//    Get it: https://github.com/settings/tokens → Generate new token (classic)
+//    Required scopes: repo, read:org, read:user
+//    Export: export GITHUB_TOKEN="ghp_your_token_here"
+//
+// 2. STITCH_API_KEY — Set as environment variable.
+//    Get it: Ask your team lead or check the internal wiki for the Google Stitch API key.
+//    Export: export STITCH_API_KEY="your_stitch_api_key_here"
+//
+// 3. ATLASSIAN_MCP_BASIC_AUTH — Set as environment variable.
+//    Get it: Base64-encode your "email:api_token" string.
+//      a) Create an API token: https://id.atlassian.com/manage-profile/security/api-tokens
+//      b) Encode: echo -n "you@company.com:your_api_token" | base64
+//    Export: export ATLASSIAN_MCP_BASIC_AUTH="your_base64_encoded_string"
+//
+// 4. OPSLEVEL_API_TOKEN — Hardcoded in config below (replace the placeholder).
+//    Get it: OpsLevel → Settings → API Tokens → Create API Token
+//    Or ask your platform engineering team for a read-only token.
+//
+// 5. New Relic API Key (NRAK-...) — Hardcoded in config below (replace the placeholder).
+//    Get it: https://one.newrelic.com/api-keys → Create a key (User type)
+//    Or ask your observability team for a shared read-only key.
+
+{
+  "$schema": "https://opencode.ai/config.json",
+
+  "plugin": ["oh-my-opencode"],
+
+  "model": "github-copilot/claude-opus-4.6",
+  "small_model": "openai/gpt-4.1-mini",
+  "theme": "opencode",
+  "autoupdate": true,
+  "share": "disabled",
+
+  "tui": {
+    "scroll_acceleration": {
+      "enabled": true
+    },
+    "diff_style": "auto"
+  },
+
+  "compaction": {
+    "auto": true,
+    "prune": true,
+    "reserved": 10000
+  },
+
+  "permission": {
+    "read": {
+      ".env": "deny",
+      ".env.*": "deny",
+      "*.pem": "deny",
+      "*.key": "deny",
+      "*": "allow"
+    },
+    "edit": "allow",
+    "glob": "allow",
+    "grep": "allow",
+    "list": "allow",
+    "bash": {
+      "rm -rf /": "deny",
+      "rm -rf /*": "deny",
+      "sudo rm -rf *": "deny",
+      "sudo rm -rf /": "deny",
+      ":(){ :|:& };:": "deny",
+      "mkfs.*": "deny",
+      "dd if=/dev/*": "deny",
+      "*": "allow"
+    },
+    "task": "allow",
+    "webfetch": "allow",
+    "websearch": "allow",
+    "codesearch": "allow",
+    "todowrite": "allow",
+    "todoread": "allow",
+    "question": "allow",
+    "lsp": "allow",
+    "skill": "allow",
+    "doom_loop": "deny",
+    "external_directory": "allow"
+  },
+
+  "instructions": [
+    "Prefer concise, readable code. Avoid over-engineering.",
+    "Follow existing patterns and conventions in the codebase.",
+    "Use conventional commits format (feat:, fix:, refactor:, chore:, docs:, test:, etc.).",
+    "Always run the test suite after making changes if one exists.",
+    "Prefer TypeScript over JavaScript when both are options."
+  ],
+
+  "mcp": {
+    "github": {
+      "type": "remote",
+      "url": "https://api.githubcopilot.com/mcp/",
+      "enabled": true,
+      "oauth": false,
+      "headers": {
+        "Authorization": "Bearer {env:GITHUB_TOKEN}"
+      }
+    },
+    "stitch": {
+      "type": "remote",
+      "url": "https://stitch.googleapis.com/mcp",
+      "enabled": true,
+      "oauth": false,
+      "headers": {
+        "Accept": "application/json",
+        "X-Goog-Api-Key": "{env:STITCH_API_KEY}"
+      }
+    },
+    "atlassian": {
+      "type": "remote",
+      "url": "https://mcp.atlassian.com/v1/mcp",
+      "enabled": true,
+      "oauth": false,
+      "headers": {
+        "Authorization": "Basic {env:ATLASSIAN_MCP_BASIC_AUTH}"
+      }
+    },
+    "opslevel": {
+      "type": "local",
+      "command": ["opslevel-mcp"],
+      "enabled": true,
+      "environment": {
+        "OPSLEVEL_API_TOKEN": "<YOUR_OPSLEVEL_API_TOKEN>"
+      }
+    },
+    "new-relic": {
+      "type": "remote",
+      "url": "https://mcp.newrelic.com/mcp/",
+      "enabled": true,
+      "oauth": false,
+      "headers": {
+        "api-key": "<YOUR_NEW_RELIC_API_KEY>",
+        "include-tags": "discovery,alerting"
+      }
+    }
+  }
+}
