@@ -7,9 +7,11 @@ export		DEFAULT="[0;39m"
 
 # OpenCode
 if which opencode >/dev/null; then
-  mkdir -p ~/.config
-  rm -rf ~/.config/opencode
-  ln -s ${PATH_TO_FILE}/ ~/.config/opencode
+  echo "Open code installed"
 else
   echo "${RED}Attention: ${DEFAULT} OpenCode not found"
+  echo "Installing config files anyway in case you use docker to run opencode"
 fi
+mkdir -p ~/.config
+rm -rf ~/.config/opencode
+ln -s ${PATH_TO_FILE}/ ~/.config/opencode
